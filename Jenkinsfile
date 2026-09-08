@@ -19,6 +19,7 @@ pipeline {
             steps {
                 sh '''
                     echo "Building backend..."
+
                     docker run --rm \
                       -v "$WORKSPACE:/app" \
                       -w /app/backend \
@@ -26,6 +27,7 @@ pipeline {
                       sh -c "npm ci"
 
                     echo "Building frontend..."
+
                     docker run --rm \
                       -v "$WORKSPACE:/app" \
                       -w /app/frontend \
@@ -40,7 +42,10 @@ pipeline {
         stage('Static Code Analysis') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')
+                    string(
+                        credentialsId: 'sonarqube',
+                        variable: 'SONAR_AUTH_TOKEN'
+                    )
                 ]) {
                     sh '''
                         docker run --rm \
@@ -70,6 +75,8 @@ pipeline {
                       --format json \
                       --output /src/trivy-sca-report.json \
                       /src
+
+                    echo "Trivy filesystem scan completed."
                 '''
             }
         }
@@ -78,11 +85,13 @@ pipeline {
             steps {
                 sh '''
                     echo "Building backend image..."
+
                     docker build \
                       -t ${BACKEND_IMAGE} \
                       ./backend
 
                     echo "Building frontend image..."
+
                     docker build \
                       -t ${FRONTEND_IMAGE} \
                       ./frontend
@@ -112,6 +121,8 @@ pipeline {
                       image \
                       --severity HIGH,CRITICAL \
                       ${FRONTEND_IMAGE}
+
+                    echo "Trivy image scans completed."
                 '''
             }
         }
@@ -142,6 +153,7 @@ pipeline {
                       k8s/frontend-deployment.yaml
 
                     echo "Updated manifests:"
+
                     grep "image:" k8s/backend-deployment.yaml
                     grep "image:" k8s/frontend-deployment.yaml
                 '''
@@ -151,15 +163,15 @@ pipeline {
         stage('Commit and Push Changes') {
             steps {
                 withCredentials([
-                    usernamePassword(
-                        credentialsId: 'Github_jenkins',
-                        usernameVariable: 'stelabiju',
-                        passwordVariable: 'GITHUB_TOKEN'
+                    string(
+                        credentialsId: 'github',
+                        variable: 'GITHUB_TOKEN'
                     )
                 ]) {
                     sh '''
-                        git config user.email "jenkins@localhost"
-                        git config user.name "Jenkins"
+                        git config --global user.email "stelabiju@gmail.com"
+                        git config --global user.name "stelabiju"
+                        git config --global --add safe.directory "${WORKSPACE}"
 
                         git add k8s/backend-deployment.yaml
                         git add k8s/frontend-deployment.yaml
@@ -168,7 +180,7 @@ pipeline {
                           -m "Update Kubernetes images to build ${BUILD_NUMBER}" \
                           || echo "No manifest changes to commit"
 
-                        git push https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/stelabiju/online-exam-system-devsecops.git HEAD:main
+                        git push https://stelabiju:${GITHUB_TOKEN}@github.com/stelabiju/online-exam-system-devsecops.git HEAD:main
                     '''
                 }
             }
@@ -176,6 +188,7 @@ pipeline {
     }
 
     post {
+
         always {
             archiveArtifacts artifacts: 'trivy-sca-report.json',
                              allowEmptyArchive: true
