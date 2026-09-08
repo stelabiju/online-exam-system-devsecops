@@ -50,7 +50,7 @@ pipeline {
                           -Dsonar.projectKey=online-exam-system \
                           -Dsonar.sources=/usr/src/backend,/usr/src/frontend \
                           -Dsonar.host.url=http://54.91.185.154:9000 \
-                          -Dsonar.token=$SONAR_AUTH_TOKEN
+                          -Dsonar.login=$SONAR_AUTH_TOKEN
                     '''
                 }
             }
