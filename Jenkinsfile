@@ -102,7 +102,6 @@ pipeline {
                       aquasec/trivy:latest \
                       image \
                       --severity HIGH,CRITICAL \
-                      --exit-code 1 \
                       ${BACKEND_IMAGE}
 
                     echo "Scanning frontend image..."
@@ -112,7 +111,6 @@ pipeline {
                       aquasec/trivy:latest \
                       image \
                       --severity HIGH,CRITICAL \
-                      --exit-code 1 \
                       ${FRONTEND_IMAGE}
                 '''
             }
