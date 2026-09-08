@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: online-exam-backend
+  labels:
+    app: online-exam-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: online-exam-backend
+  template:
+    metadata:
+      labels:
+        app: online-exam-backend
+    spec:
+      containers:
+        - name: online-exam-backend
+          image: stelabiju/online-exam-backend:IMAGE_TAG
+          ports:
+            - containerPort: 5000

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: online-exam-frontend
+  labels:
+    app: online-exam-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: online-exam-frontend
+  template:
+    metadata:
+      labels:
+        app: online-exam-frontend
+    spec:
+      containers:
+        - name: online-exam-frontend
+          image: stelabiju/online-exam-frontend:IMAGE_TAG
+          ports:
+            - containerPort: 80
