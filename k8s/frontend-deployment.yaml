@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: online-exam-frontend
-          image: stelabiju/online-exam-frontend:IMAGE_TAG
+          image: stelabiju/online-exam-frontend:7
           ports:
             - containerPort: 80

@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: online-exam-backend
-          image: stelabiju/online-exam-backend:IMAGE_TAG
+          image: stelabiju/online-exam-backend:7
           ports:
             - containerPort: 5000
