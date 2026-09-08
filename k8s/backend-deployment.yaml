@@ -19,3 +19,6 @@ spec:
           image: stelabiju/online-exam-backend:7
           ports:
             - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://mongo.argocd.svc.cluster.local:27017/onlineexamdb"
